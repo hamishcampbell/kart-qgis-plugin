@@ -5,6 +5,8 @@ from qgis.core import (
     QgsProcessingParameterFolderDestination,
 )
 
+from kart.gui import icons
+
 
 class KartAlgorithm(QgsProcessingAlgorithm):
     def createInstance(self):
@@ -31,6 +33,9 @@ class RepoInit(KartAlgorithm):
 
     def groupId(self):
         return "kart_repositories"
+
+    def icon(self):
+        return icons.createRepoIcon
 
     def initAlgorithm(self, config=None):
         self.addParameter(
@@ -67,6 +72,9 @@ class RepoClone(KartAlgorithm):
 
     def groupId(self):
         return "kart_repositories"
+
+    def icon(self):
+        return icons.cloneRepoIcon
 
     def initAlgorithm(self, config=None):
 
@@ -123,6 +131,9 @@ class RepoCreateBranch(KartAlgorithm):
     def groupId(self):
         return "kart_branches"
 
+    def icon(self):
+        return icons.createBranchIcon
+
     def initAlgorithm(self, config=None):
 
         self.addParameter(
@@ -169,6 +180,9 @@ class RepoSwitchBranch(KartAlgorithm):
     def groupId(self):
         return "kart_branches"
 
+    def icon(self):
+        return icons.checkoutIcon
+
     def initAlgorithm(self, config=None):
 
         self.addParameter(
@@ -214,6 +228,9 @@ class RepoDeleteBranch(KartAlgorithm):
 
     def groupId(self):
         return "kart_branches"
+
+    def icon(self):
+        return icons.deleteIcon
 
     def initAlgorithm(self, config=None):
 

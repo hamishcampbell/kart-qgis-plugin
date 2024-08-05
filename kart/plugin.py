@@ -6,7 +6,6 @@ from qgis.core import QgsApplication, QgsProject, Qgis, QgsMessageOutput
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QAction
-from qgis.PyQt.QtGui import QIcon
 
 from kart.gui.dockwidget import KartDockWidget
 from kart.gui.settingsdialog import SettingsDialog
@@ -16,15 +15,6 @@ from kart.processing.provider import KartProvider
 
 
 pluginPath = os.path.dirname(__file__)
-
-
-def icon(f):
-    return QIcon(os.path.join(pluginPath, "img", f))
-
-
-kartIcon = icon("kart.png")
-settingsIcon = icon("settings.png")
-aboutIcon = icon("info.png")
 
 
 class KartPlugin(object):

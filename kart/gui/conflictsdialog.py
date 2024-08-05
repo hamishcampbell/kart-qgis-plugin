@@ -17,15 +17,8 @@ from qgis.PyQt.QtWidgets import (
     QTreeWidgetItemIterator,
 )
 
-pluginPath = os.path.split(os.path.dirname(__file__))[0]
+from kart.gui import icons
 
-
-def icon(f):
-    return QIcon(os.path.join(pluginPath, "img", f))
-
-
-layerIcon = icon("layer.png")
-featureIcon = icon("layer.png")
 
 WIDGET, BASE = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "conflictsdialog.ui")
@@ -84,7 +77,7 @@ class ConflictsDialog(BASE, WIDGET):
         for path, conflicts in self.conflicts.items():
             topItem = QTreeWidgetItem()
             topItem.setText(0, path)
-            topItem.setIcon(0, layerIcon)
+            topItem.setIcon(0, icons.layerIcon)
             self.treeConflicts.addTopLevelItem(topItem)
             self.treeItems[path] = {}
             for fid, conflict in conflicts.items():
@@ -171,9 +164,9 @@ class ConflictsDialog(BASE, WIDGET):
                     "", "There are still conflicts in the current feature", Qgis.Warning
                 )
                 return
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
@@ -201,18 +194,18 @@ class ConflictsDialog(BASE, WIDGET):
     def solveOurs(self):
         conflict = self.lastSelectedItem.conflict
         feature = dict(conflict["ours"])
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
     def solveTheirs(self):
         conflict = self.lastSelectedItem.conflict
         feature = dict(conflict["theirs"])
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
@@ -225,18 +218,18 @@ class ConflictsDialog(BASE, WIDGET):
         conflict = self.lastSelectedItem.conflict
         feature = conflict["ours"] or conflict["theirs"]
         feature = dict(feature)
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
     def solveWithAncestor(self):
         conflict = self.lastSelectedItem.conflict
         feature = dict(conflict["ancestor"])
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
@@ -352,7 +345,7 @@ class ConflictItem(QTreeWidgetItem):
     def __init__(self, path, fid, conflict):
         QTreeWidgetItem.__init__(self)
         self.setText(0, fid)
-        self.setIcon(0, featureIcon)
+        self.setIcon(0, icons.featureIcon)
         self.setSizeHint(0, QSize(self.sizeHint(0).width(), 25))
         self.conflict = conflict
         self.fid = fid

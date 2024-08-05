@@ -164,9 +164,9 @@ class ConflictsDialog(BASE, WIDGET):
                     "", "There are still conflicts in the current feature", Qgis.Warning
                 )
                 return
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
@@ -194,18 +194,18 @@ class ConflictsDialog(BASE, WIDGET):
     def solveOurs(self):
         conflict = self.lastSelectedItem.conflict
         feature = dict(conflict["ours"])
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
     def solveTheirs(self):
         conflict = self.lastSelectedItem.conflict
         feature = dict(conflict["theirs"])
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
@@ -218,18 +218,18 @@ class ConflictsDialog(BASE, WIDGET):
         conflict = self.lastSelectedItem.conflict
         feature = conflict["ours"] or conflict["theirs"]
         feature = dict(feature)
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 
     def solveWithAncestor(self):
         conflict = self.lastSelectedItem.conflict
         feature = dict(conflict["ancestor"])
-        feature[
-            "id"
-        ] = f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        feature["id"] = (
+            f"{self.lastSelectedItem.path}:feature:{self.lastSelectedItem.fid}"
+        )
         self.resolvedFeatures[feature["id"]] = feature
         self.updateAfterSolvingCurrentItem()
 

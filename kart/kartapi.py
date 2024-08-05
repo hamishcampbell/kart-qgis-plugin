@@ -7,8 +7,8 @@ import subprocess
 import sys
 import tempfile
 
-from typing import Optional, List
-from functools import partial, wraps
+from typing import Optional, List, Callable
+from functools import wraps
 
 from urllib.parse import urlparse
 
@@ -33,7 +33,7 @@ from qgis.utils import iface
 from kart.gui.userconfigdialog import UserConfigDialog
 from kart.gui.installationwarningdialog import InstallationWarningDialog
 
-from kart.utils import progressBar, setting, setSetting, KARTPATH, HELPERMODE
+from kart.utils import setting, setSetting, KARTPATH, HELPERMODE
 from kart import logging
 
 
@@ -62,7 +62,7 @@ def executeskart(f):
             msglines = []
             for line in lines:
                 # skip lines that refer to missing loads of shared libraries
-                if line.startswith("ERROR 1: Can't load") or '.dylib' in line:
+                if line.startswith("ERROR 1: Can't load") or ".dylib" in line:
                     continue
                 if "The specified procedure could not be found" in line:
                     continue
@@ -211,7 +211,7 @@ def executeKart(commands, path=None, jsonoutput=False, feedback=None):
             executeKart.env.pop("GDAL_DRIVER_PATH")
 
     # always set the use helper env var as it is long lived and the setting may have changed
-    executeKart.env['KART_USE_HELPER'] = '1' if setting(HELPERMODE) else ''
+    executeKart.env["KART_USE_HELPER"] = "1" if setting(HELPERMODE) else ""
 
     try:
         encoding = locale.getdefaultlocale()[1] or "utf-8"
@@ -256,23 +256,6 @@ def executeKart(commands, path=None, jsonoutput=False, feedback=None):
         raise KartException(str(e))
     finally:
         QApplication.restoreOverrideCursor()
-
-
-def _processProgressLine(bar, line):
-    if "Writing dataset" in line:
-        datasetname = line.split(":")[-1].strip()
-        bar.setText(f"Checking out layer '{datasetname}'")
-    elif line.startswith("Receiving objects: ") or line.startswith("Writing objects: "):
-        tokens = line.split(": ")
-        bar.setText(tokens[0])
-        bar.setValue(math.floor(float(tokens[1][1 : tokens[1].find("%")].strip())))
-    else:
-        msg = line.split(" - ")[-1]
-        if "%" in msg:
-            matches = re.findall(r"(\d+(\.\d+)?)", msg)
-            if matches:
-                value = math.floor(float(matches[0][0]))
-                bar.setValue(value)
 
 
 class Repository:
@@ -342,17 +325,15 @@ class Repository:
         extent: Optional[QgsReferencedRectangle] = None,
         username: Optional[str] = None,
         password: Optional[str] = None,
-    ) -> 'Repository':
+        output_handler: Callable[[str], None] = None,
+    ) -> "Repository":
         """
         Performs a (blocking, main thread only) clone operation
         """
         commands = Repository.generate_clone_arguments(
             src, dst, location, extent, username, password
         )
-
-        with progressBar("Clone") as bar:
-            bar.setText("Cloning repository")
-            executeKart(commands, feedback=partial(_processProgressLine, bar))
+        executeKart(commands, feedback=output_handler)
 
         return Repository(dst)
 

@@ -1,6 +1,6 @@
 from qgis.core import QgsProcessingProvider
 
-
+from kart.gui import icons
 from kart.processing.tools import (
     RepoClone,
     RepoInit,
@@ -27,6 +27,4 @@ class KartProvider(QgsProcessingProvider):
         return self.tr("Kart")
 
     def icon(self):
-        from kart.plugin import kartIcon
-
-        return kartIcon
+        return icons.kartIcon

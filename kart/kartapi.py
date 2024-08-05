@@ -1,6 +1,5 @@
 import json
 import locale
-import math
 import os
 import re
 import subprocess

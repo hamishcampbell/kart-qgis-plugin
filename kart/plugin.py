@@ -2,7 +2,7 @@ import configparser
 import os
 import platform
 
-from qgis.core import QgsProject, Qgis, QgsMessageOutput
+from qgis.core import QgsApplication, QgsProject, Qgis, QgsMessageOutput
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QAction
@@ -12,6 +12,8 @@ from kart.gui.dockwidget import KartDockWidget
 from kart.gui.settingsdialog import SettingsDialog
 from kart.kartapi import checkKartInstalled, kartVersionDetails
 from kart.layers import LayerTracker
+from kart.processing.provider import KartProvider
+
 
 pluginPath = os.path.dirname(__file__)
 
@@ -28,6 +30,11 @@ aboutIcon = icon("info.png")
 class KartPlugin(object):
     def __init__(self, iface):
         self.iface = iface
+        self.provider = None
+
+    def initProcessing(self):
+        self.provider = KartProvider()
+        QgsApplication.processingRegistry().addProvider(self.provider)
 
     def initGui(self):
 
@@ -51,6 +58,8 @@ class KartPlugin(object):
         QgsProject.instance().layerRemoved.connect(self.tracker.layerRemoved)
         QgsProject.instance().layerWasAdded.connect(self.tracker.layerAdded)
         QgsProject.instance().crsChanged.connect(self.tracker.updateRubberBands)
+
+        self.initProcessing()
 
     def showDock(self):
         if checkKartInstalled():
@@ -96,3 +105,5 @@ class KartPlugin(object):
 
         QgsProject.instance().layerRemoved.disconnect(self.tracker.layerRemoved)
         QgsProject.instance().layerWasAdded.disconnect(self.tracker.layerAdded)
+
+        QgsApplication.processingRegistry().removeProvider(self.provider)

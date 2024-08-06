@@ -1,10 +1,13 @@
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (
     QgsProcessingAlgorithm,
+    QgsProcessingParameterFile,
+    QgsProcessingParameterNumber,
     QgsProcessingParameterString,
+    QgsProcessingParameterExtent,
     QgsProcessingParameterFolderDestination,
+    QgsReferencedRectangle,
 )
-
 from kart.gui import icons
 
 
@@ -39,9 +42,10 @@ class RepoInit(KartAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterFile(
                 self.REPO_PATH,
                 self.tr("Repo Path"),
+                behavior=QgsProcessingParameterFile.Folder,
             )
         )
 
@@ -59,6 +63,8 @@ class RepoInit(KartAlgorithm):
 class RepoClone(KartAlgorithm):
     REPO_CLONE_URL = "REPO_CLONE_URL"
     REPO_CLONE_REFISH = "REPO_CLONE_REFISH"
+    REPO_CLONE_DEPTH = "REPO_CLONE_DEPTH"
+    REPO_CLONE_SPATIAL_EXTENT = "REPO_CLONE_SPATIAL_EXTENT"
     REPO_OUTPUT_FOLDER = "REPO_OUTPUT_FOLDER"
 
     def displayName(self):
@@ -88,8 +94,26 @@ class RepoClone(KartAlgorithm):
         self.addParameter(
             QgsProcessingParameterString(
                 self.REPO_CLONE_REFISH,
-                self.tr("Branch/Tag/Refish"),
+                self.tr("Branch/Tag/Ref"),
                 optional=True,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterExtent(
+                self.REPO_CLONE_SPATIAL_EXTENT,
+                self.tr("Spatial Extent"),
+                optional=True,
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.REPO_CLONE_DEPTH,
+                self.tr("Depth"),
+                type=QgsProcessingParameterNumber.Integer,
+                optional=True,
+                minValue=1,
             )
         )
 
@@ -103,10 +127,21 @@ class RepoClone(KartAlgorithm):
         from kart.kartapi import Repository
 
         repo_url = self.parameterAsString(parameters, self.REPO_CLONE_URL, context)
-        folder = self.parameterAsString(parameters, self.REPO_OUTPUT_FOLDER, context)
+        folder = self.parameterAsFile(parameters, self.REPO_OUTPUT_FOLDER, context)
         refish = self.parameterAsString(parameters, self.REPO_CLONE_REFISH, context)
+        depth = self.parameterAsInt(parameters, self.REPO_CLONE_DEPTH, context)
 
-        repo = Repository.clone(repo_url, folder)
+        extent_rect = self.parameterAsExtent(
+            parameters, self.REPO_CLONE_SPATIAL_EXTENT, context
+        )
+        extent_crs = self.parameterAsExtentCrs(
+            parameters, self.REPO_CLONE_SPATIAL_EXTENT, context
+        )
+        extent = None
+        if extent_rect:
+            extent = QgsReferencedRectangle(extent_rect, extent_crs)
+
+        repo = Repository.clone(repo_url, folder, extent=extent, depth=depth)
         if refish:
             repo.checkoutBranch(refish)
 
@@ -137,9 +172,10 @@ class RepoCreateBranch(KartAlgorithm):
     def initAlgorithm(self, config=None):
 
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterFile(
                 self.REPO_PATH,
                 self.tr("Repo Path"),
+                behavior=QgsProcessingParameterFile.Folder,
             )
         )
 
@@ -153,7 +189,7 @@ class RepoCreateBranch(KartAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         from kart.kartapi import Repository
 
-        repo_path = self.parameterAsString(parameters, self.REPO_PATH, context)
+        repo_path = self.parameterAsFile(parameters, self.REPO_PATH, context)
         branch_name = self.parameterAsString(parameters, self.REPO_REFISH, context)
 
         repo = Repository(repo_path)
@@ -186,9 +222,10 @@ class RepoSwitchBranch(KartAlgorithm):
     def initAlgorithm(self, config=None):
 
         self.addParameter(
-            QgsProcessingParameterString(
+            QgsProcessingParameterFile(
                 self.REPO_PATH,
                 self.tr("Repo Path"),
+                behavior=QgsProcessingParameterFile.Folder,
             )
         )
 
@@ -202,7 +239,7 @@ class RepoSwitchBranch(KartAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         from kart.kartapi import Repository
 
-        repo_path = self.parameterAsString(parameters, self.REPO_PATH, context)
+        repo_path = self.parameterAsFile(parameters, self.REPO_PATH, context)
         branch_name = self.parameterAsString(parameters, self.REPO_BRANCH_NAME, context)
 
         repo = Repository(repo_path)
@@ -251,7 +288,7 @@ class RepoDeleteBranch(KartAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         from kart.kartapi import Repository
 
-        repo_path = self.parameterAsString(parameters, self.REPO_PATH, context)
+        repo_path = self.parameterAsFile(parameters, self.REPO_PATH, context)
         branch_name = self.parameterAsString(parameters, self.REPO_REFISH, context)
 
         repo = Repository(repo_path)

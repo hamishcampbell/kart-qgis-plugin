@@ -6,7 +6,7 @@ from qgis.gui import QgsMessageBar
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QSize, Qt
-from qgis.PyQt.QtGui import QIcon, QFont
+from qgis.PyQt.QtGui import QFont
 from qgis.PyQt.QtWidgets import (
     QDialog,
     QTreeWidgetItem,

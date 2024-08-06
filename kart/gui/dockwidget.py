@@ -7,7 +7,6 @@ from functools import partial
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, QMimeData, QByteArray, QDataStream, QIODevice
 
-from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
     QDockWidget,
     QTreeWidgetItem,

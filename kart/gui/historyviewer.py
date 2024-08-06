@@ -127,7 +127,7 @@ class HistoryTree(QTreeWidget):
                             item.commit["commit"],
                             parent,
                         ),
-                       icons.diffIcon,
+                        icons.diffIcon,
                     )
             actions.update(
                 {

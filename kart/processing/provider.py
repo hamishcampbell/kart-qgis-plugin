@@ -7,11 +7,12 @@ from kart.processing.tools import (
     RepoSwitchBranch,
     RepoCreateBranch,
     RepoDeleteBranch,
+    RepoPullFromRemote,
+    RepoPushToRemote,
 )
 
 
 class KartProvider(QgsProcessingProvider):
-
     def loadAlgorithms(self, *args, **kwargs):
 
         self.addAlgorithm(RepoInit())
@@ -19,6 +20,8 @@ class KartProvider(QgsProcessingProvider):
         self.addAlgorithm(RepoSwitchBranch())
         self.addAlgorithm(RepoCreateBranch())
         self.addAlgorithm(RepoDeleteBranch())
+        self.addAlgorithm(RepoPullFromRemote())
+        self.addAlgorithm(RepoPushToRemote())
 
     def id(self, *args, **kwargs):
         return "Kart"

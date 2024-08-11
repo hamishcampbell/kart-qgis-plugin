@@ -9,6 +9,7 @@ from kart.processing.tools import (
     RepoDeleteBranch,
     RepoPullFromRemote,
     RepoPushToRemote,
+    TestAlgorithm,
 )
 
 
@@ -22,6 +23,7 @@ class KartProvider(QgsProcessingProvider):
         self.addAlgorithm(RepoDeleteBranch())
         self.addAlgorithm(RepoPullFromRemote())
         self.addAlgorithm(RepoPushToRemote())
+        self.addAlgorithm(TestAlgorithm())
 
     def id(self, *args, **kwargs):
         return "Kart"

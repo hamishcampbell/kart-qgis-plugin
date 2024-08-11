@@ -9,6 +9,8 @@ from qgis.core import (
     QgsProcessingParameterFolderDestination,
     QgsProcessingOutputMultipleLayers,
     QgsReferencedRectangle,
+    QgsProcessingParameterDefinition,
+    QgsProcessingOutputDefinition,
 )
 from kart.gui import icons
 
@@ -22,6 +24,51 @@ class KartAlgorithm(QgsProcessingAlgorithm):
 
     def tr(self, string):
         return QCoreApplication.translate("Processing", string)
+
+    def initAlgorithm(self, config=None):
+        return {}
+
+
+def param(param: QgsProcessingParameterDefinition):
+    def class_decorator(cls):
+        initFunc = cls.initAlgorithm
+
+        def wrapper(self, *args, **kwargs):
+            self.addParameter(param)
+            initFunc(self, *args, **kwargs)
+
+        cls.initAlgorithm = wrapper
+        return cls
+
+    return class_decorator
+
+
+def output(param: QgsProcessingOutputDefinition):
+    def class_decorator(cls):
+        initFunc = cls.initAlgorithm
+
+        def wrapper(self, *args, **kwargs):
+            self.addOutput(param)
+            initFunc(self, *args, **kwargs)
+
+        cls.initAlgorithm = wrapper
+        return cls
+
+    return class_decorator
+
+
+@param(QgsProcessingParameterString("SOMEVALUE", "Name"))
+@param(QgsProcessingParameterString("SOMEVALUE2", "Name2"))
+@output(QgsProcessingOutputMultipleLayers("SOMEVALUE3", "Output Layers"))
+class TestAlgorithm(KartAlgorithm):
+    def displayName(self):
+        return self.tr("Test Algorithm")
+
+    def shortHelpString(self):
+        return self.tr("Test Algorithm")
+
+    def processAlgorithm(self, parameters, context, feedback):
+        return {}
 
 
 class RepoInit(KartAlgorithm):

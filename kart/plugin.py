@@ -11,8 +11,7 @@ from kart.gui.dockwidget import KartDockWidget
 from kart.gui.settingsdialog import SettingsDialog
 from kart.kartapi import checkKartInstalled, kartVersionDetails
 from kart.layers import LayerTracker
-from kart.processing.provider import KartProvider
-
+from kart.processing import KartProvider
 
 
 pluginPath = os.path.dirname(__file__)

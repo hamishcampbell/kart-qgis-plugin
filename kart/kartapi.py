@@ -400,8 +400,11 @@ class Repository:
         else:
             self.executeKart(["init"])
 
-    def importIntoRepo(self, source):
-        self.executeKart(["import", source])
+    def importIntoRepo(self, source, dataset=None):
+        importArgs = [source]
+        if dataset:
+            importArgs += ["--dataset", dataset]
+        self.executeKart(["import"] + importArgs)
 
     def checkUserConfigured(self):
         configDict = self._config()
